@@ -17,6 +17,7 @@ public class MetroDAO {
 
 	public List<Fermata> readFermate() {
 
+		//da una lista di tutte le fermate
 		final String sql = "SELECT id_fermata, nome, coordx, coordy FROM fermata ORDER BY nome ASC";
 		List<Fermata> fermate = new ArrayList<Fermata>();
 
@@ -42,6 +43,7 @@ public class MetroDAO {
 		return fermate;
 	}
 
+	//legge tutte le linee
 	public List<Linea> readLinee() {
 		final String sql = "SELECT id_linea, nome, velocita, intervallo FROM linea ORDER BY nome ASC";
 
@@ -67,6 +69,36 @@ public class MetroDAO {
 		}
 
 		return linee;
+	}
+
+	public boolean isConnesse(Fermata partenza, Fermata arrivo) {
+		String sql = "SELECT COUNT (*) AS C"
+				+ "FROM connessione "
+				+ "WHERE id_stazP=? "
+				+ "AND id_stazA=? " ;
+		
+		try {
+			Connection conn = DBConnect.getConnection() ;
+			PreparedStatement st = conn.prepareStatement(sql) ;
+			st.setInt(1, partenza.getIdFermata());
+			st.setInt(1, arrivo.getIdFermata());
+			
+			ResultSet res = st.executeQuery() ;
+			res.first();
+			
+			int c = res.getInt("c");
+			
+			conn.close();
+			
+			return c != 0;
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			
+		
+		}
+		return false;
 	}
 
 	
